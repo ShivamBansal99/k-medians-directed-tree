@@ -52,23 +52,17 @@ set<int> proxies(int u, int t){
 		}
 	}
 	
-	/*
-	compute C_u[1] and N_u[1]
+	int lol = INT_MAX;
+	for(int v=m[u];v<u;v++){
+		for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
+			if(lol>T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v]){
+				C_u[1]=x;
+				N_u=t_dash;
+				lol=T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v];
+			}
+		}
+	}
 	
-%
-%
-%
-%
-	*/
-	
-	
-	// T[u][t]=INT_MAX;
-	// for(int v=m[u];v<u;v++){
-		// for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
-			
-			// T[u][t]=min(T[u][t],T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v] );
-		// }
-	// }
 	int i=2;
 	t=t-C_u[1]-1;
 	while(t>0){

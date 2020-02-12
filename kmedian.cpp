@@ -39,7 +39,7 @@ set<int> proxies(int u, int t){
 				int a = L_u[m_dash[v]][t-1] + R_u[m_dash[v]] + T_u[m_dash[v]] - R_u[v] - T_u[v]; //Au,v,t = L(u,m'v,t) + R(u,m'v)1 + T(u,m'v,0) − R(u,v,1) − T(u,v,0)
 				int b = INT_MAX;
 				for(int x=m_dash[v];x<m[v];x++){
-					for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
+					for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
 						if(b>T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]){
 							x_u[v][t-1] = x;
 							c_u[v][t-1] = t_dash;
@@ -54,7 +54,7 @@ set<int> proxies(int u, int t){
 	
 	int lol = INT_MAX;
 	for(int v=m[u];v<u;v++){
-		for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
+		for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
 			if(lol>T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v]){
 				C_u[1]=x;
 				N_u=t_dash;
@@ -110,7 +110,7 @@ int main(){
 					int a = L_u[m_dash[v]][t-1] + R_u[m_dash[v]] + T_u[m_dash[v]] - R_u[v] - T_u[v]; //Au,v,t = L(u,m'v,t) + R(u,m'v)1 + T(u,m'v,0) − R(u,v,1) − T(u,v,0)
 					int b = INT_MAX;
 					for(int x=m_dash[v];x<m[v];x++){
-						for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
+						for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
 							b=min(b,T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]);
 						}
 					}
@@ -119,7 +119,7 @@ int main(){
 			}
 			T[u][t]=INT_MAX;
 			for(int v=m[u];v<u;v++){
-				for(int t_dash = 1;t_dash<t && .......... ;t_dash++){
+				for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
 					T[u][t]=min(T[u][t],T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v] );
 				}
 			}

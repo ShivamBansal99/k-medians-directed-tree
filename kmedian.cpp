@@ -333,36 +333,42 @@ void phase_one(){
 					int a = L_u[m_dash[v]][t-1] + R_u[m_dash[v]] + T_u[m_dash[v]] - R_u[v] - T_u[v]; //Au,v,t = L(u,m'v,t) + R(u,m'v)1 + T(u,m'v,0) − R(u,v,1) − T(u,v,0)
 					int b = INT_MAX;
 					for(int x=m_dash[v];x<m[v];x++){
-						for(int t_dash = 1;t_dash<=t-1 && t_dash<=x-m[x]+1 && t-(m[x]-m[u])-1<=t_dash ;t_dash++){
-							b=min(b,T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]);
+						for(int t_dash = 1;t_dash<=t-1  ;t_dash++){
+							if(t_dash<=x-m[x]+1 && t-(m[x]-m[u])-1<=t_dash)
+								b=min(b,T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]);
 						}
 					}
 					L_u[v][t-1] = min(a,b);
 				}
 				////Added by meee
 				else{
-					L_u[v][t-1]=L_u[m[v]][t-1];
+					if(m[v]==m[u]){
+						L_u[v][t-1] = 0;
+					}else{
+						L_u[v][t-1] = L_u[m[v]][t-1];
+					}
 				}
 			}
 			T[u][t]=INT_MAX;
 			for(int v=m[u];v<u;v++){
 				// if(t==2 && v<3) cout<<"test"<<v-m[v]+1<<' '<< t-(m[v]-m[u])-1<<endl;
-				for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
+				for(int t_dash = 1;t_dash<t  ;t_dash++){
 					// if(t==2) cout<<"yes"<<' '<< u<<' '<<t_dash<< endl;
-					T[u][t]=min(T[u][t],T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v] );
+					if(t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash)
+						T[u][t]=min(T[u][t],T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v] );
 				}
 			}
 		}
 		
 	}
 
-	// cout<<"tuuuuv is:\n";
-	// for(int t=0;t<=num_nodes;t++){
-	// 	for(int i=0;i<num_nodes;i++){
-	// 		cout<<T[t][i]<<' ';
-	// 	}
-	// 	cout<<endl;
-	// }
+	cout<<"tuuuuv is:\n";
+	for(int t=0;t<=k;t++){
+		for(int i=0;i<k;i++){
+			cout<<T[t][i]<<' ';
+		}
+		cout<<endl;
+	}
 	return;
 }
 
@@ -394,6 +400,7 @@ set<int> proxies(int u, int t){
 	int C_u[k+1];
 	int x_u[num_nodes][k+1];
 	int c_u[num_nodes][k+1];
+	cout<<"ti "<<t<<endl;
 	for(int t=2;t<=k;t++){
 		for(int v=m[u]+1;v<u;v++){
 			if(v==m[v] && m[v]!=m[u]){
@@ -401,37 +408,48 @@ set<int> proxies(int u, int t){
 				//int a = L_u[m_dash[v]][t-1] + R_u[m_dash[v]] + T_u[m_dash[v]] - R_u[v] - T_u[v]; //Au,v,t = L(u,m'v,t) + R(u,m'v)1 + T(u,m'v,0) − R(u,v,1) − T(u,v,0)
 				int b = INT_MAX;
 				for(int x=m[u];x<m[v];x++){
-					for(int t_dash = 1;t_dash<=t && t_dash<=x-m[x]+1 && t-(m[x]-m[u])-1<=t_dash ;t_dash++){
-						if(b>T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]){
+					for(int t_dash = 1;t_dash<t ;t_dash++){
+						cout<<"check "<<x <<' '<<v<<' '<<u<<' '<< t-(m[x]-m[u])-1<<endl;
+						if(b>T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]  && t_dash<=x-m[x]+1 && t-(m[x]-m[u])-1<=t_dash ){
+							// cout<<"check "<<T[x][t_dash] <<' '<< L_u[x][t-1-t_dash] <<' '<< R_u[x] << ' '<< - R_u[v] << ' '<<- T_u[v]<<endl;
 							// cout<<"this is "<<v<<' '<<t-1<<endl;
 							x_u[v][t-1] = x;
 							c_u[v][t-1] = t_dash;
+							b=T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v];
 						}
-						b=min(b,T[x][t_dash] + L_u[x][t-1-t_dash] + R_u[x] - R_u[v] - T_u[v]);
 					}
 				}
+				cout<<"b "<<b<<endl;
+				if(b==INT_MAX) b=0;
 				L_u[v][t-1] = b;
 			}
 			/////added by me
 			else{
 				if(m[v]==m[u]){
 					L_u[v][t-1] = 0;
-					x_u[v][t-1] = 0;
-					c_u[v][t-1] = 0;
+					x_u[v][t-1] = m[u];
+					c_u[v][t-1] = 1;
 				}else{
 					L_u[v][t-1] = L_u[m[v]][t-1];
 					x_u[v][t-1] = x_u[m[v]][t-1];
 					c_u[v][t-1] = c_u[m[v]][t-1];
 				}
 			}
+			// cout<<"this is "<<L_u[v][t-1]<<endl;
 		}
 	}
+	cout<<"tf "<<t<<endl;
 	 // cout<<"hii2";
 	int lol = INT_MAX;
 	for(int v=m[u];v<u;v++){
-		for(int t_dash = 1;t_dash<t && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash ;t_dash++){
-			if(lol>T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v]){
+		if(v==3) cout<<"coming here "<<v-m[v]+1 <<' '<< t-(m[v]-m[u])-1<<endl;
+		for(int t_dash = 1;t_dash<t ;t_dash++){
+			cout<<"coming here2 "<<v<<' '<<t_dash<<' '<<lol <<' '<< T[v][t_dash] <<' '<< L_u[m[v]][t-1-t_dash] <<' '<< R_u[v]<<endl;
+			if(lol>=T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v] && t_dash<=v-m[v]+1 && t-(m[v]-m[u])-1<=t_dash){
+
+				cout<<"set\n\n\n";
 				N_u[1]=v;
+				cout<<"highest num pro "<<v<<endl;
 				C_u[1]=t_dash;
 				lol=T[v][t_dash] + L_u[m[v]][t-1-t_dash] + R_u[v];
 			}
@@ -441,35 +459,43 @@ set<int> proxies(int u, int t){
 	int i=2;
 	t=t-C_u[1]-1;
 
-	// cout<<"xu\n";
+	cout<<"xu\n";
 	
-	// for(int i=0;i<num_nodes;i++){
-	// 	for(int t=1;t<k;t++){
-	// 		cout<<x_u[i][t]<<' ';
-	// 	}
-	// 	cout<<endl;
-	// }
-	
-	// cout<<endl;
-
-	while(t>0){
-		// cout<<t<<' '<<i<<' '<<N_u[i-1]<<' '<<C_u[i-1]<<endl;
-		C_u[i] = x_u[N_u[i-1]][t]+1;
-		N_u[i] = c_u[N_u[i-1]][t]-1;
-		t=t-C_u[i];
-		i++;
+	for(int j=0;j<num_nodes;j++){
+		for(int t=1;t<k;t++){
+			cout<<x_u[j][t]<<' ';
+		}
+		cout<<endl;
 	}
 
-	// cout<<u<<endl;
+	
+	cout<<"i "<<i<<endl;
 
-	// cout<<"NUUUU\n";
-	// for(int i=0;i<k+1;i++){
-	// 	cout<<N_u[i]<<' ';
-	// }
+	while(t>0){
+		
+		C_u[i] = c_u[N_u[i-1]][t];
+		N_u[i] = x_u[N_u[i-1]][t];
+		cout<<t<<' '<<i<<' '<<N_u[i]<<' '<<C_u[i]<<' '<<x_u[N_u[i-1]][t]<<endl;
+		t=t-C_u[i];
+		i++;
 
-	// cout<<endl;
-	// cout<<"hii4"<<endl;
+	}
+
+	cout<<u<<endl;
+
+	cout<<"NUUUU\n";
+	for(int j=0;j<=i;j++){
+		cout<<N_u[j]<<' ';
+	}
+	cout<<"XUUUU\n";
+	for(int j=0;j<=i;j++){
+		cout<<C_u[j]<<' ';
+	}
+
+	cout<<endl;
+	cout<<"hii4"<<endl;
 	for(int temp=1;temp<i;temp++){
+		cout<<"now "<<u<<' '<<N_u[i-temp]<<' '<<C_u[i-temp]<<' '<<i-temp<<endl;
 		set<int> temp_set = proxies(N_u[i-temp],C_u[i-temp]);
 		res.insert(temp_set.begin(),temp_set.end());
 	}

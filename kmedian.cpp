@@ -311,26 +311,26 @@ set<int> proxies(int u, int t){
 	// T[v][1]
 
 
-		int tmp_arr[u-m[u]+2];
-		tmp_arr[0]=0;
-		for(int i=0;i<(u-m[u]+1);i++){
-			tmp_arr[i+1]=tmp_arr[i]+node_weight[i+m[u]]*D[i+m[u]][u];
-		}
-		for(int i=m[u];i<=u;i++){
-			T_u[i]= tmp_arr[i-m[u]+1]  - tmp_arr[m[i]-m[u]];
-		}
-		for(int i=m[u];i<=u;i++){
-			R_u[i]= tmp_arr[u-m[u]+1]  - tmp_arr[i-m[u]+1];
-		}
-		for(int i=m[u];i<=u;i++){
-			L_u[i][0]= tmp_arr[m[i]-m[u]]  - tmp_arr[0];
-		}
+	int tmp_arr[u-m[u]+2];
+	tmp_arr[0]=0;
+	for(int i=0;i<(u-m[u]+1);i++){
+		tmp_arr[i+1]=tmp_arr[i]+node_weight[i+m[u]]*D[i+m[u]][u];
+	}
+	for(int i=m[u];i<=u;i++){
+		T_u[i]= tmp_arr[i-m[u]+1]  - tmp_arr[m[i]-m[u]];
+	}
+	for(int i=m[u];i<=u;i++){
+		R_u[i]= tmp_arr[u-m[u]+1]  - tmp_arr[i-m[u]+1];
+	}
+	for(int i=m[u];i<=u;i++){
+		L_u[i][0]= tmp_arr[m[i]-m[u]]  - tmp_arr[0];
+	}
 
-		for(int i=m[u];i<=u;i++){
-			T[i][1]=tu1[i];
-		}
+	for(int i=m[u];i<=u;i++){
+		T[i][1]=tu1[i];
+	}
 
-
+	delete[] tmp_arr;
 	//initialisation();
 	
 
@@ -390,6 +390,14 @@ set<int> proxies(int u, int t){
 		N_u[i] = x_u[N_u[i-1]][t];
 		t=t-C_u[i];
 		i++;
+
+	}
+	delete[] T_u;
+	delete[] R_u;
+	for(int i=0;i<num_nodes;i++){
+		delete[] L_u;
+		delete[] x_u;
+		delete[] c_u;
 
 	}
 

@@ -44,28 +44,22 @@ int distance(int u,int v){
 }
 
 int weight_below(int root){
-	wt_below[root]=node_weight[root];int temp=0;
+	wt_below[root]=node_weight[root];
 	for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
-		temp+=weight_below((*itr));
+		wt_below[root]+=weight_below((*itr));
 	}
-	wt_below[root]+=temp;
 	return wt_below[root];
 }
 
 int compute_tu1(int root){
-	tu1[root]=0;int temp=0;
-	if(!arr[root].empty()){
-		for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
-			temp+=(wt_below[(*itr)])*edge_weight[((*itr)*num_nodes)+root]+compute_tu1((*itr));
-		}
-		tu1[root]=temp;
+	tu1[root]=0;
+	for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
+		tu1[root]+=(wt_below[(*itr)])*edge_weight[((*itr)*num_nodes)+root]+compute_tu1((*itr));
 	}
 	return tu1[root];
 }
 int prev_leaf(int leaf){
-	int index= leaf_map[leaf];
-	int ans=index>0?leaves[index-1]:-1;
-	return ans;
+	return leaf_map[leaf]>0?leaves[leaf_map[leaf]-1]:-1;
 }
 void create_leaves(int root, int &index){
 	if(arr[root].empty()){
@@ -82,23 +76,17 @@ void create_leaves(int root, int &index){
 }
 void create_mvd(int root){
 	m_dash[root]= prev_leaf(root);
-	if(!arr[root].empty()){
-		for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
-			create_mvd((*itr));
-		}
+	for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
+		create_mvd((*itr));
 	}
 	return;
 }
 int create_mv(int root){
 	int temp=root;int aa=1;m[root]=root;
-	if(!arr[root].empty()){
-		for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
-			temp=create_mv((*itr));
-			if(aa==1){
-				m[root]=temp;
-			}
-			aa++;
-		}
+	for(auto itr = arr[root].begin();itr!=arr[root].end();itr++){
+		temp=create_mv((*itr));
+		if(aa==1) m[root]=temp;
+		aa++;
 	}
 	return m[root];
 }
@@ -114,8 +102,7 @@ void create_postorder(int root, int &index){
 	for(auto itr = postArr[root].begin();itr!=postArr[root].end();itr++){
 		create_postorder((*itr),index);
 	}
-	post_order_tree[index]=root;
-	index++;
+	post_order_tree[index]=root;index++;
 	return;
 }
 
@@ -123,9 +110,11 @@ void initialize(){
 	num_leaves=0;
 	for(int i=0;i<N;i++){
 		tree[i]=-1;
+		postTree[i]=-1;
 	}
 	for(int i=0;i<N;i++){
 		arr[i].clear();
+		postArr[i].clear();
 	}
 	num_nodes=0;
 	num_edges=0;
@@ -205,20 +194,8 @@ void initialize(){
 	// }
 	// cout<<endl;
 
-
-
-	// if(index==num_nodes){
-	// 	cout<<"The post order traversal is: \n";
-	// 	for(int i=0;i<num_nodes;i++){
-	// 		cout<<post_order_tree[i]<<" ";
-	// 	}
-	// 	cout<<endl;
-	// }
-	// else{
-	// 	cout<<"Something wrong\n";
-	// }
-
 	cout<<"The root in postOrdertree is : "<<root<<endl<<endl;
+
 	create_mv(root);
 	cout<<"The mv is: \n";
 	// for(int i=0;i<num_nodes;i++){
@@ -264,16 +241,10 @@ void initialize(){
 	// }
 	// cout<<endl;
 
-
-
-
 	distance(root,root);
 	cout<<"The distance is: \n";
-	// for(int j=0;j<num_nodes;j++){
-	// 	for(int i=0;i<num_nodes;i++){
-	// 		cout<<D[j][i]<<" ";
-	// 	}
-	// 	cout<<endl;
+	// for(int i=0;i<num_nodes;i++){
+	// 	cout<<D[i]<<" ";
 	// }
 	// cout<<endl;
 
@@ -289,7 +260,6 @@ void phase_one(){
 		for(int i=0;i<num_nodes;i++){
 			L_u[i]=new int[k+1];
 		}
-		// cout<<123<<endl;
 
 		int* tmp_arr = new int[u-m[u]+2];
 		tmp_arr[0]=0;
@@ -372,7 +342,6 @@ set<int> proxies(int u, int t){
 	for(int i=0;i<num_nodes;i++){
 		L_u[i]=new int[k+1];
 	}
-	// cout<<123<<endl;
 
 	int* tmp_arr = new int[u-m[u]+2];
 	tmp_arr[0]=0;
@@ -475,6 +444,8 @@ set<int> proxies(int u, int t){
 		set<int> temp_set = proxies(N_u[i-temp],C_u[i-temp]);
 		res.insert(temp_set.begin(),temp_set.end());
 	}
+	delete[] N_u;
+	delete[] C_u;
 	return res;
 }
 int main(){
